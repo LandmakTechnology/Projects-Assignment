@@ -1,0 +1,52 @@
+- hosts: all
+  become: yes
+  tasks: 
+    - name: Install nginx
+      apt:
+        name: nginx
+        state: latest
+
+    - name: Ensure nginx is running
+      systemd:
+        state: started
+        name: nginx
+
+    - name: Copy website files to the server
+      copy:
+        src: ../infra-web/
+        dest: /app/infra-web
+        mode: preserve
+    
+    - name: Copy api files to the server
+      copy:
+        src: ../infra-api/
+        dest: /app/infra-api
+        mode: preserve
+
+    - name: Copy docker compose to server
+      copy:
+        src: ../docker-compose.yml
+        dest: /app
+        mode: preserve
+
+    - name: Start docker compose
+      shell: docker-compose up -d
+      args:
+         chdir: /app 
+
+    - name: Apply Nginx template
+      template:
+        src: conf/nginx.conf
+        dest: /etc/nginx/sites-available/default
+
+    - name: Enable new site
+      file:
+        src: /etc/nginx/sites-available/default
+        dest: /etc/nginx/sites-enabled/default
+        state: link
+      notify: Restart Nginx
+
+    - name: Restart Nginx
+      systemd:
+        state: restarted
+        name: nginx
