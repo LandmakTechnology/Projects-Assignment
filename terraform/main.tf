@@ -1,6 +1,6 @@
 terraform {
   backend "s3" {
-    bucket         = "terraform-state-utibe"
+    bucket         = "terraform-state-infra-test"
     key            = "terraform.tfstate"
     region         = "us-east-2"
     dynamodb_table = "terraform"
@@ -47,6 +47,6 @@ resource "aws_security_group" "allow_http" {
 resource "aws_instance" "web_server" {
   ami                    = var.ami_id
   instance_type          = "t2.micro"
-  key_name               = "blog"
+  key_name               = "dev"
   vpc_security_group_ids = [aws_security_group.allow_http.id]
 }

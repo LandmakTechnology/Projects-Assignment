@@ -7,5 +7,5 @@ variable "ami_id" {
 variable "vpc_id" {
   type        = string
   description = "The VPC to associate the security group with"
-  default     = "vpc-30149b5b"
+  default     = "vpc-083f53f84174c22cc"
 }
